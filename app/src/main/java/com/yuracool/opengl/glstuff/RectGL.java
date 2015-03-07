@@ -11,20 +11,30 @@ import java.nio.FloatBuffer;
  * Created by Kuhta on 06.03.2015.
  */
 public class RectGL {
+    private static final int MODE_IN = 1;
+    private static final int MODE_OUT = 2;
 	private static final float POINTS_ARRAY[] = {
 			-1, 1, //left top
 			-1, -1, //left bottom
-			1, -1, //right top
-			1, 1 // right bottom
+			1, -1, //right bottom
+			1, 1 // right top
 	};
 
-	private static final byte INDEXES_ARRAY[] = {0, 1, 2, 2, 3, 0};
+	private static final byte INDEXES_ARRAY[] = {0, 3, 1, 3, 2, 1};
 
 	private FloatBuffer pointsBuffer;
 	private ByteBuffer indexesBuffer;
-	private PointF point = new PointF();
 
-	public RectGL(){
+    private final long animationDuration;
+    private long animationStart;
+    private int animationMode;
+    private float coefficient = 1;
+    private float previousAnimationTime = 0;
+    private boolean isAnimate = false;
+
+	public RectGL(long animationDuration){
+        this.animationDuration = animationDuration;
+
 		ByteBuffer bBuffer = ByteBuffer.allocateDirect(POINTS_ARRAY.length * Float.SIZE / 8);
 		bBuffer.order(ByteOrder.nativeOrder());
 		pointsBuffer = bBuffer.asFloatBuffer();
@@ -38,6 +48,8 @@ public class RectGL {
 	}
 
 	public void draw(GL10 gl){
+        updateArray();
+
 		gl.glFrontFace(GL10.GL_CW);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, pointsBuffer);
@@ -45,47 +57,45 @@ public class RectGL {
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 	}
 
-	public PointF getTopLeft(){
-		point.set(pointsBuffer.get(0), pointsBuffer.get(1));
-		return point;
-	}
+    public void animateIn() {
+        animate(MODE_IN);
+    }
 
-	public PointF getBottomLeft(){
-		point.set(pointsBuffer.get(2), pointsBuffer.get(3));
-		return point;
-	}
+    public void animateOut() {
+        animate(MODE_OUT);
+    }
 
-	public PointF getBottomRight(){
-		point.set(pointsBuffer.get(4), pointsBuffer.get(5));
-		return point;
-	}
+    private void animate(int mode){
+        animationStart = System.currentTimeMillis();
+        previousAnimationTime = animationDuration - animationDuration * coefficient;
+        animationMode = mode;
+        isAnimate = true;
+    }
 
-	public PointF getTopRight(){
-		point.set(pointsBuffer.get(6), pointsBuffer.get(7));
-		return point;
-	}
+    private void updateArray() {
+        if(!isAnimate)
+            return;
 
-	public void setTopLeft(float x, float y){
-		pointsBuffer.put(0, x);
-		pointsBuffer.put(1, y);
-		pointsBuffer.position(0);
-	}
+        // coefficient goes from 0 to 1
+        coefficient = (System.currentTimeMillis() - animationStart + previousAnimationTime) / (float) animationDuration;
 
-	public void setBottomLeft(float x, float y){
-		pointsBuffer.put(2, x);
-		pointsBuffer.put(3, y);
-		pointsBuffer.position(0);
-	}
+        if(coefficient > 1){
+            coefficient = 1;
+            isAnimate = false;
+        }
 
-	public void setBottomRight(float x, float y){
-		pointsBuffer.put(4, x);
-		pointsBuffer.put(5, y);
-		pointsBuffer.position(0);
-	}
+        float x1, x2;
 
-	public void setTopRight(float x, float y){
-		pointsBuffer.put(6, x);
-		pointsBuffer.put(7, y);
-		pointsBuffer.position(0);
-	}
+        if(animationMode == MODE_IN){
+            x1 = POINTS_ARRAY[0] - POINTS_ARRAY[0] * coefficient;
+            x2 = POINTS_ARRAY[6] - POINTS_ARRAY[6] * coefficient;
+        }else{
+            x1 = POINTS_ARRAY[0] * coefficient;
+            x2 = POINTS_ARRAY[6] * coefficient;
+        }
+
+        pointsBuffer.put(0, x1);
+        pointsBuffer.put(6, x2);
+        pointsBuffer.position(0);
+    }
 }
