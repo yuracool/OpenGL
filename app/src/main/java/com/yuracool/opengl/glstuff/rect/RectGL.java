@@ -1,7 +1,5 @@
 package com.yuracool.opengl.glstuff.rect;
 
-import android.graphics.PointF;
-
 import javax.microedition.khronos.opengles.GL10;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -26,14 +24,18 @@ public class RectGL {
 	private ByteBuffer indexesBuffer;
 
     private final long animationDuration;
+    private final float angle;
     private long animationStart;
     private int animationMode;
     private float coefficient = 1;
-    private float previousAnimationTime = 0;
+    private float previousCoefficient = 0;
+    private float currentAngle = 0;
+
     private boolean isAnimate = false;
 
-	public RectGL(long animationDuration){
+	public RectGL(long animationDuration, float angle){
         this.animationDuration = animationDuration;
+        this.angle = angle;
 
 		ByteBuffer bBuffer = ByteBuffer.allocateDirect(POINTS_ARRAY.length * Float.SIZE / 8);
 		bBuffer.order(ByteOrder.nativeOrder());
@@ -48,12 +50,18 @@ public class RectGL {
 	}
 
 	public void draw(GL10 gl){
-        updateArray();
+        updateFrame();
 
 		gl.glFrontFace(GL10.GL_CW);
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+
 		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, pointsBuffer);
+
+        gl.glPushMatrix();
+        gl.glRotatef(currentAngle, 0, 0, 1);
 		gl.glDrawElements(GL10.GL_TRIANGLES, INDEXES_ARRAY.length, GL10.GL_UNSIGNED_BYTE, indexesBuffer);
+        gl.glPopMatrix();
+
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 	}
 
@@ -67,17 +75,17 @@ public class RectGL {
 
     private void animate(int mode){
         animationStart = System.currentTimeMillis();
-        previousAnimationTime = animationDuration - animationDuration * coefficient;
         animationMode = mode;
+        previousCoefficient = 1 - coefficient;
         isAnimate = true;
     }
 
-    private void updateArray() {
+    private void updateFrame() {
         if(!isAnimate)
             return;
 
         // coefficient goes from 0 to 1
-        coefficient = (System.currentTimeMillis() - animationStart + previousAnimationTime) / (float) animationDuration;
+        coefficient = previousCoefficient + (System.currentTimeMillis() - animationStart) / (float) animationDuration;
 
         if(coefficient > 1){
             coefficient = 1;
@@ -89,9 +97,11 @@ public class RectGL {
         if(animationMode == MODE_IN){
             x1 = POINTS_ARRAY[0] - POINTS_ARRAY[0] * coefficient;
             x2 = POINTS_ARRAY[6] - POINTS_ARRAY[6] * coefficient;
+            currentAngle = angle * coefficient;
         }else{
             x1 = POINTS_ARRAY[0] * coefficient;
             x2 = POINTS_ARRAY[6] * coefficient;
+            currentAngle = angle - angle * coefficient;
         }
 
         pointsBuffer.put(0, x1);

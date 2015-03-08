@@ -13,8 +13,8 @@ import javax.microedition.khronos.opengles.GL10;
 public class RectRenderer extends BasicRenderer {
 	private RectGL rectGL;
 
-	public RectRenderer(long animationDuration){
-		rectGL = new RectGL(animationDuration);
+	public RectRenderer(long animationDuration, float angle){
+		rectGL = new RectGL(animationDuration, angle);
 	}
 
 	@Override
@@ -29,9 +29,6 @@ public class RectRenderer extends BasicRenderer {
 	public void onDrawFrame(GL10 gl) {
 		gl.glDisable(GL10.GL_DITHER);
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		gl.glMatrixMode(GL10.GL_MODELVIEW);
-		gl.glLoadIdentity();
-		GLU.gluLookAt(gl, 0, 0, -10, 0, 0, 0, 0, 1, 0);
 
 		rectGL.draw(gl);
 
@@ -43,8 +40,17 @@ public class RectRenderer extends BasicRenderer {
 		gl.glViewport(0, 0, width, height);
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
-		float ratio = (float) width / height;
-		gl.glFrustumf(-ratio, ratio, 1, -1, 1, 25);
+
+        float max = Math.max(width, height);
+        float left, right, top, bottom;
+        left = right = max / height;
+        top = bottom = max / width;
+
+        gl.glFrustumf(-left, right, -bottom, top, 1, 20);
+
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glLoadIdentity();
+        GLU.gluLookAt(gl, 0, 0, -3, 0, 0, 0, 0, 1, 0);
 	}
 
     public void animateIn(){

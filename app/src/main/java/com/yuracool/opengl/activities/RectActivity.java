@@ -16,7 +16,7 @@ public class RectActivity extends BaseGLActivity {
     }
 
     	private void initGLSurfaceView(){
-        final RectRenderer renderer = new RectRenderer(100);
+        final RectRenderer renderer = new RectRenderer(1000, 90);
 		surfaceView.setRenderer(renderer);
 
         surfaceView.setOnClickListener(new View.OnClickListener() {
