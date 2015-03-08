@@ -1,4 +1,4 @@
-package com.yuracool.opengl.glstuff;
+package com.yuracool.opengl.glstuff.rect;
 
 import android.graphics.PointF;
 

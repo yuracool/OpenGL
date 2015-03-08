@@ -2,7 +2,7 @@ package com.yuracool.opengl.activities;
 
 import android.os.Bundle;
 
-import com.yuracool.opengl.glstuff.TriangleRenderer;
+import com.yuracool.opengl.glstuff.triangle.TriangleRenderer;
 
 /**
  * Created by Yura on 07.03.2015.

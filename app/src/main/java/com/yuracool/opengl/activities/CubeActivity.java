@@ -2,7 +2,7 @@ package com.yuracool.opengl.activities;
 
 import android.os.Bundle;
 
-import com.yuracool.opengl.glstuff.CubeRenderer;
+import com.yuracool.opengl.glstuff.cube.CubeRenderer;
 
 /**
  * Created by Yura on 07.03.2015.

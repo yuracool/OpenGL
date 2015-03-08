@@ -1,8 +1,8 @@
-package com.yuracool.opengl.glstuff;
+package com.yuracool.opengl.glstuff.rect;
 
-import android.graphics.PointF;
-import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
+
+import com.yuracool.opengl.glstuff.BasicRenderer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -10,7 +10,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Created by Kuhta on 05.03.2015.
  */
-public class RectRenderer extends BasicRenderer{
+public class RectRenderer extends BasicRenderer {
 	private RectGL rectGL;
 
 	public RectRenderer(long animationDuration){
@@ -44,7 +44,7 @@ public class RectRenderer extends BasicRenderer{
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
 		float ratio = (float) width / height;
-		gl.glFrustumf(-ratio, ratio, -1, 1, 1, 25);
+		gl.glFrustumf(-ratio, ratio, 1, -1, 1, 25);
 	}
 
     public void animateIn(){

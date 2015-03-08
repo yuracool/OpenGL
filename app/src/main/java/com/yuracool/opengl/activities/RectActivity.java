@@ -3,7 +3,7 @@ package com.yuracool.opengl.activities;
 import android.os.Bundle;
 import android.view.View;
 
-import com.yuracool.opengl.glstuff.RectRenderer;
+import com.yuracool.opengl.glstuff.rect.RectRenderer;
 
 /**
  * Created by Yura on 07.03.2015.

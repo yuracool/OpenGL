@@ -1,8 +1,8 @@
-package com.yuracool.opengl.glstuff;
+package com.yuracool.opengl.glstuff.triangle;
 
-import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-import android.os.SystemClock;
+
+import com.yuracool.opengl.glstuff.BasicRenderer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -10,11 +10,11 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Created by Yura on 07.03.2015.
  */
-public class CubeRenderer extends BasicRenderer{
-    CubeGL cubeGL;
+public class TriangleRenderer extends BasicRenderer {
+    TriangleGL triangleGL;
 
-    public CubeRenderer() {
-        cubeGL = new CubeGL();
+    public TriangleRenderer(){
+        triangleGL = new TriangleGL();
     }
 
     @Override
@@ -29,16 +29,10 @@ public class CubeRenderer extends BasicRenderer{
     public void onDrawFrame(GL10 gl) {
         gl.glDisable(GL10.GL_DITHER);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-        gl.glMatrixMode(GL10.GL_MODELVIEW);
-        gl.glLoadIdentity();
-        GLU.gluLookAt(gl, 0, 0, -4, 0, 0, 0, 0, 1, 0);
 
-        long time = SystemClock.uptimeMillis() % 4000;
-        float angle = 0.09f * (int) time;
 
-        gl.glRotatef(angle, 1, 0, 3);
 
-        cubeGL.draw(gl);
+        triangleGL.draw(gl);
 
         //log();
     }
@@ -48,7 +42,16 @@ public class CubeRenderer extends BasicRenderer{
         gl.glViewport(0, 0, width, height);
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glLoadIdentity();
-        float ratio = (float) width / height;
-        gl.glFrustumf(-ratio, ratio, -1, 1, 1, 25);
+
+        float max = Math.max(width, height);
+        float left, right, top, bottom;
+        left = right = max / height;
+        top = bottom = max / width;
+
+        gl.glFrustumf(-left, right, -bottom, top, 1, 20);
+
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glLoadIdentity();
+        GLU.gluLookAt(gl, 0, 0, -10, 0, 0, 0, 0, 1, 0);
     }
 }

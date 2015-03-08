@@ -2,13 +2,10 @@ package com.yuracool.opengl.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.View;
 
 import com.yuracool.opengl.R;
-import com.yuracool.opengl.glstuff.CubeRenderer;
-import com.yuracool.opengl.glstuff.RectRenderer;
 
 /**
  * Created by Kuhta on 05.03.2015.
